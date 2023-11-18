@@ -4,8 +4,6 @@ dotenv.config();
 
 const KEY: string | undefined = process.env.SUBSCRIPTION_KEY;
 const URL: string | undefined = process.env.ENDPOINT;
-console.log(KEY);
-console.log(URL);
 
 const imageUrl =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROL1kGWhRNsmGDSWPTCY8TOTflSENi9dr7pg&usqp=CAU";

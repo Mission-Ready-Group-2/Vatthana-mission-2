@@ -40,8 +40,6 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const KEY = process.env.SUBSCRIPTION_KEY;
 const URL = process.env.ENDPOINT;
-console.log(KEY);
-console.log(URL);
 const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROL1kGWhRNsmGDSWPTCY8TOTflSENi9dr7pg&usqp=CAU";
 // Axios config for sending request to Azure Computer Vision API
 const axiosConfig = {
