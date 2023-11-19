@@ -35,24 +35,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchSimilarCars = exports.fetchData = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dotenv = __importStar(require("dotenv"));
+const car_model_1 = __importDefault(require("./car.model"));
 dotenv.config();
 const KEY = process.env.SUBSCRIPTION_KEY;
 const URL = process.env.ENDPOINT;
-const imageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROL1kGWhRNsmGDSWPTCY8TOTflSENi9dr7pg&usqp=CAU";
-// Axios config for sending request to Azure Computer Vision API
-const axiosConfig = {
-    method: "post",
-    url: URL,
-    data: {
-        url: imageUrl,
-    },
-    headers: {
-        "Content-Type": "application/json",
-        "Ocp-Apim-Subscription-Key": KEY,
-    },
-};
+const imageUrl = "https://www.aa.co.nz/assets/motoring/blog/jazz-eHEV2.jpg";
 // Array of colors for comparison
 const colors = [
     "red",
@@ -129,6 +119,68 @@ const cars = [
     "estate car",
     "grand tourer",
 ];
+// Array of car brands for comparison
+const carBrands = [
+    "Toyota",
+    "Ford",
+    "Chevrolet",
+    "Honda",
+    "Nissan",
+    "Volkswagen",
+    "BMW",
+    "Mercedes-Benz",
+    "Audi",
+    "Hyundai",
+    "Kia",
+    "Volvo",
+    "Mazda",
+    "Subaru",
+    "Tesla",
+    "Ferrari",
+    "Lamborghini",
+    "Porsche",
+    "Jaguar",
+    "Land Rover",
+    "Lexus",
+    "Acura",
+    "Buick",
+    "Cadillac",
+    "Chrysler",
+    "Dodge",
+    "Jeep",
+    "Ram",
+    "GMC",
+    "Lincoln",
+    "Chevrolet",
+    "Fiat",
+    "Maserati",
+    "Alfa Romeo",
+    "MINI",
+    "Smart",
+    "Vauxhall",
+    "Opel",
+    "Peugeot",
+    "Renault",
+    "Citroën",
+    "Fiat",
+    "Skoda",
+    "Seat",
+    "Mitsubishi",
+    "Suzuki",
+    "Isuzu",
+    "Proton",
+    "Tata",
+    "Mahindra",
+    "Koenigsegg",
+    "Bugatti",
+    "McLaren",
+    "Aston Martin",
+    "Lotus",
+    "Maybach",
+    "Bentley",
+    "Rolls-Royce",
+    // Add more brands as needed
+];
 // Function to find relevent tag color
 const findReleventTagColor = (tags) => {
     const tag = tags.toLowerCase();
@@ -141,17 +193,36 @@ const findReleventTagCar = (tags) => {
     const tagCar = cars.find((car) => car.toLowerCase() === tag.toLowerCase());
     return tagCar;
 };
-// Function to fetch data from Azure Computer Vision API and return tags
-const fetchData = () => __awaiter(void 0, void 0, void 0, function* () {
+// Function to find relevent tag car brand
+const findReleventTagCarBrand = (tags) => {
+    const tag = tags.toLowerCase();
+    const tagCarBrand = carBrands.find((car) => car.toLowerCase() === tag.toLowerCase());
+    return tagCarBrand;
+};
+// Function to fetch data from Azure Computer Vision API and return tags from url
+const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
+    // Axios config for sending request to Azure Computer Vision API
+    const axiosConfig = {
+        method: "post",
+        url: URL,
+        data: {
+            url: url,
+        },
+        headers: {
+            "Content-Type": "application/json",
+            "Ocp-Apim-Subscription-Key": KEY,
+        },
+    };
     try {
         const response = yield (0, axios_1.default)(axiosConfig);
         const data = response.data.tagsResult.values;
-        console.log("Tags:", data);
         const colorTags = [];
         const carTypeTag = [];
+        const carBrandTag = [];
         data.map((item) => {
             const tagColor = findReleventTagColor(item.name);
             const tagCar = findReleventTagCar(item.name);
+            const tagCarBrand = findReleventTagCarBrand(item.name);
             if (tagColor) {
                 tagColor.toLowerCase();
                 colorTags.push(tagColor);
@@ -160,18 +231,68 @@ const fetchData = () => __awaiter(void 0, void 0, void 0, function* () {
                 tagCar.toLowerCase();
                 carTypeTag.push(tagCar);
             }
+            if (tagCarBrand) {
+                tagCarBrand.toLowerCase();
+                carBrandTag.push(tagCarBrand);
+            }
         });
-        const tags = {
+        const fullTags = {
             colorTags,
             carTypeTag,
+            carBrandTag,
         };
-        console.log(tags);
-        console.log(`Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}`);
+        console.log(fullTags);
+        const tags = {
+            colorTags: colorTags[0],
+            carTypeTag: carTypeTag[0],
+            carBrandTag: carBrandTag[0],
+        };
+        // Get first tag from each array ONLY
+        // const tags = {
+        //   color: colorTags[0],
+        //   carType: carTypeTag[0],
+        //   brand: carBrandTag[0],
+        // };
+        // console.log(tags);
+        // console.log(
+        //   `Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}, BRAND: ${carBrandTag[0]}`
+        // );
         return tags;
     }
     catch (error) {
         console.error("Error:", error.response);
     }
 });
-// Call fetchData function
-fetchData();
+exports.fetchData = fetchData;
+const fetchSimilarCars = (tags) => __awaiter(void 0, void 0, void 0, function* () {
+    const { colorTags, carTypeTag, carBrandTag } = tags;
+    const query = {};
+    if (tags) {
+        if (colorTags) {
+            if (colorTags === "") {
+                // Assuming you want to search for the provided color
+            }
+            else {
+                // Assuming you want to search for the provided color
+                query.color = colorTags
+                    .split(" ")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(" ");
+            }
+        }
+        if (carTypeTag) {
+            query.type = carTypeTag
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" ");
+        }
+        // if (carBrandTag) {
+        //   query.brand = carBrandTag.toLowerCase();
+        // }
+    }
+    // Performing the query
+    // console.log("Query:", query);
+    const result = yield car_model_1.default.find(query);
+    return result;
+});
+exports.fetchSimilarCars = fetchSimilarCars;
