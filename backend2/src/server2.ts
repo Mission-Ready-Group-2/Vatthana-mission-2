@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import CarModel from "./car.model";
 import bodyParser = require("body-parser");
 import { fetchData, fetchSimilarCars, filterDataFromImage } from "./request";
-
+import { Tags } from "./interfaces";
 // import .env variables
 const MONGOURL = process.env.MONGO;
 const KEY = process.env.SUBSCRIPTION_KEY;
@@ -32,11 +32,6 @@ app.post("/analyze", async (req: Request, res: Response) => {
     const { imageUrl } = req.body;
     // console.log("imageUrl", imageUrl);
 
-    interface Tags {
-      colorTags?: string | undefined;
-      carTypeTag?: string | undefined;
-      carBrandTag?: string | undefined;
-    }
     const tags: Tags | undefined = await fetchData(imageUrl);
     let result;
     if (tags) {
@@ -47,24 +42,18 @@ app.post("/analyze", async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ tags: tags, result: result });
-    console.log({ tags: tags, result: result });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+// POST endpoint to analyze image and return similar cars from database using fata from image
 app.post("/analyzeImage", async (req: Request, res: Response) => {
   try {
     const data = req.body;
     console.log("data", data);
     // console.log("imageUrl", imageUrl);
-
-    interface Tags {
-      colorTags?: string;
-      carTypeTag?: string;
-      carBrandTag?: string;
-    }
 
     let tags: Tags | undefined;
     tags = await filterDataFromImage(data);
@@ -77,7 +66,6 @@ app.post("/analyzeImage", async (req: Request, res: Response) => {
     }
 
     res.status(200).json({ tags: tags, result: result });
-    console.log({ tags: tags, result: result });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });

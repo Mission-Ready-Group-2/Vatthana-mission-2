@@ -61,6 +61,7 @@ const mangoURL = MONGOURL || "mongodb://localhost:27017/cars";
 app.post("/analyze", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { imageUrl } = req.body;
+        // console.log("imageUrl", imageUrl);
         const tags = yield (0, request_1.fetchData)(imageUrl);
         let result;
         if (tags) {
@@ -71,17 +72,18 @@ app.post("/analyze", (req, res) => __awaiter(void 0, void 0, void 0, function* (
             res.status(400).json({ error: "No tags found" });
         }
         res.status(200).json({ tags: tags, result: result });
-        console.log({ tags: tags, result: result });
     }
     catch (error) {
         console.error("Error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }));
+// POST endpoint to analyze image and return similar cars from database using fata from image
 app.post("/analyzeImage", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = req.body;
         console.log("data", data);
+        // console.log("imageUrl", imageUrl);
         let tags;
         tags = yield (0, request_1.filterDataFromImage)(data);
         let result = {};
@@ -93,7 +95,6 @@ app.post("/analyzeImage", (req, res) => __awaiter(void 0, void 0, void 0, functi
             res.status(400).json({ error: "No tags found" });
         }
         res.status(200).json({ tags: tags, result: result });
-        console.log({ tags: tags, result: result });
     }
     catch (error) {
         console.error("Error:", error);

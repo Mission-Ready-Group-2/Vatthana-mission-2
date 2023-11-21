@@ -220,6 +220,7 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
         const colorTags = [];
         const carTypeTag = [];
         const carBrandTag = [];
+        // map through data and find relevent tags
         data.map((item) => {
             const tagColor = findReleventTagColor(item.name);
             const tagCar = findReleventTagCar(item.name);
@@ -237,27 +238,20 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
                 carBrandTag.push(tagCarBrand);
             }
         });
+        // create object of tags with all tags
         const fullTags = {
             colorTags,
             carTypeTag,
             carBrandTag,
         };
         console.log(fullTags);
+        // create object of tags with only first index 0
         const tags = {
             colorTags: colorTags[0],
             carTypeTag: carTypeTag[0],
             carBrandTag: carBrandTag[0],
         };
-        // Get first tag from each array ONLY
-        // const tags = {
-        //   color: colorTags[0],
-        //   carType: carTypeTag[0],
-        //   brand: carBrandTag[0],
-        // };
         console.log(tags);
-        // console.log(
-        //   `Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}, BRAND: ${carBrandTag[0]}`
-        // );
         return tags;
     }
     catch (error) {
@@ -265,11 +259,13 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.fetchData = fetchData;
+// Function to filter data from image tags coming from frontend (Azure Computer Vision API) and return relevent tags from it
 const filterDataFromImage = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const colorTags = [];
         const carTypeTag = [];
         const carBrandTag = [];
+        // map through data and find relevent tags
         data.map((item) => {
             const tagColor = findReleventTagColor(item.name);
             const tagCar = findReleventTagCar(item.name);
@@ -287,11 +283,13 @@ const filterDataFromImage = (data) => __awaiter(void 0, void 0, void 0, function
                 carBrandTag.push(tagCarBrand);
             }
         });
+        // create object of tags with all tags and tags
         const fullTags = {
             colorTags,
             carTypeTag,
             carBrandTag,
         };
+        // create object of tags with only first index tag
         const tags = {
             colorTags: colorTags[0],
             carTypeTag: carTypeTag[0],
@@ -327,12 +325,8 @@ const fetchSimilarCars = (tags) => __awaiter(void 0, void 0, void 0, function* (
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                 .join(" ");
         }
-        // if (carBrandTag) {
-        //   query.brand = carBrandTag.toLowerCase();
-        // }
     }
-    // Performing the query
-    // console.log("Query:", query);
+    // data from database based on query
     const result = yield car_model_1.default.find(query);
     return result;
 });

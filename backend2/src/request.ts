@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import * as dotenv from "dotenv";
 import CarModel from "./car.model";
+import { Tags, Data, CarModelType, Query } from "./interfaces";
 dotenv.config();
 
 const KEY: string | undefined = process.env.SUBSCRIPTION_KEY;
@@ -196,7 +197,7 @@ export const fetchData = async (url: string) => {
     const colorTags: string[] = [];
     const carTypeTag: string[] = [];
     const carBrandTag: string[] = [];
-
+    // map through data and find relevent tags
     data.map((item: any) => {
       const tagColor = findReleventTagColor(item.name);
       const tagCar = findReleventTagCar(item.name);
@@ -214,43 +215,35 @@ export const fetchData = async (url: string) => {
         carBrandTag.push(tagCarBrand);
       }
     });
+    // create object of tags with all tags
     const fullTags = {
       colorTags,
       carTypeTag,
       carBrandTag,
     };
     console.log(fullTags);
+    // create object of tags with only first index 0
     const tags = {
       colorTags: colorTags[0],
       carTypeTag: carTypeTag[0],
       carBrandTag: carBrandTag[0],
     };
-    // Get first tag from each array ONLY
-    // const tags = {
-    //   color: colorTags[0],
-    //   carType: carTypeTag[0],
-    //   brand: carBrandTag[0],
-    // };
+
     console.log(tags);
-    // console.log(
-    //   `Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}, BRAND: ${carBrandTag[0]}`
-    // );
+
     return tags;
   } catch (error: any) {
     console.error("Error:", error.response);
   }
 };
 
-interface Data {
-  name: string;
-  confidence: number;
-}
+// Function to filter data from image tags coming from frontend (Azure Computer Vision API) and return relevent tags from it
 export const filterDataFromImage = async (data: Data[]) => {
   try {
     const colorTags: string[] = [];
     const carTypeTag: string[] = [];
     const carBrandTag: string[] = [];
-
+    // map through data and find relevent tags
     data.map((item: any) => {
       const tagColor = findReleventTagColor(item.name);
       const tagCar = findReleventTagCar(item.name);
@@ -268,12 +261,14 @@ export const filterDataFromImage = async (data: Data[]) => {
         carBrandTag.push(tagCarBrand);
       }
     });
+    // create object of tags with all tags and tags
     const fullTags = {
       colorTags,
       carTypeTag,
       carBrandTag,
     };
 
+    // create object of tags with only first index tag
     const tags = {
       colorTags: colorTags[0],
       carTypeTag: carTypeTag[0],
@@ -286,29 +281,9 @@ export const filterDataFromImage = async (data: Data[]) => {
   }
 };
 
-// Interface for car model
-interface CarModelType {
-  image: string;
-  brand: string;
-  color: string;
-  price: number;
-  type: string;
-}
-
-interface Tags {
-  colorTags?: string | undefined;
-  carTypeTag?: string | undefined;
-  carBrandTag?: string | undefined;
-}
-
 // Function to fetch similar cars from database based on tags
 export const fetchSimilarCars = async (tags: Tags): Promise<CarModelType[]> => {
   const { colorTags, carTypeTag, carBrandTag } = tags;
-  interface Query {
-    color?: string;
-    type?: string;
-    // brand: string;
-  }
 
   const query: Query = {};
 
@@ -335,14 +310,9 @@ export const fetchSimilarCars = async (tags: Tags): Promise<CarModelType[]> => {
         )
         .join(" ");
     }
-
-    // if (carBrandTag) {
-    //   query.brand = carBrandTag.toLowerCase();
-    // }
   }
 
-  // Performing the query
-  // console.log("Query:", query);
+  // data from database based on query
   const result = await CarModel.find(query);
 
   return result;
