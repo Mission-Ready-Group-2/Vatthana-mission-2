@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchSimilarCars = exports.fetchData = void 0;
+exports.fetchSimilarCars = exports.filterDataFromImage = exports.fetchData = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dotenv = __importStar(require("dotenv"));
 const car_model_1 = __importDefault(require("./car.model"));
@@ -216,6 +216,7 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield (0, axios_1.default)(axiosConfig);
         const data = response.data.tagsResult.values;
+        console.log(data);
         const colorTags = [];
         const carTypeTag = [];
         const carBrandTag = [];
@@ -253,7 +254,7 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
         //   carType: carTypeTag[0],
         //   brand: carBrandTag[0],
         // };
-        // console.log(tags);
+        console.log(tags);
         // console.log(
         //   `Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}, BRAND: ${carBrandTag[0]}`
         // );
@@ -264,6 +265,46 @@ const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.fetchData = fetchData;
+const filterDataFromImage = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const colorTags = [];
+        const carTypeTag = [];
+        const carBrandTag = [];
+        data.map((item) => {
+            const tagColor = findReleventTagColor(item.name);
+            const tagCar = findReleventTagCar(item.name);
+            const tagCarBrand = findReleventTagCarBrand(item.name);
+            if (tagColor) {
+                tagColor.toLowerCase();
+                colorTags.push(tagColor);
+            }
+            if (tagCar) {
+                tagCar.toLowerCase();
+                carTypeTag.push(tagCar);
+            }
+            if (tagCarBrand) {
+                tagCarBrand.toLowerCase();
+                carBrandTag.push(tagCarBrand);
+            }
+        });
+        const fullTags = {
+            colorTags,
+            carTypeTag,
+            carBrandTag,
+        };
+        const tags = {
+            colorTags: colorTags[0],
+            carTypeTag: carTypeTag[0],
+            carBrandTag: carBrandTag[0],
+        };
+        return tags;
+    }
+    catch (error) {
+        console.error("Error:", error.response);
+    }
+});
+exports.filterDataFromImage = filterDataFromImage;
+// Function to fetch similar cars from database based on tags
 const fetchSimilarCars = (tags) => __awaiter(void 0, void 0, void 0, function* () {
     const { colorTags, carTypeTag, carBrandTag } = tags;
     const query = {};

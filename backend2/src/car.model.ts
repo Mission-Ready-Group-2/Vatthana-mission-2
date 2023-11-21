@@ -1,6 +1,7 @@
 // car.model.ts
 import mongoose, { Schema, Document } from "mongoose";
 
+// Car interface
 interface Car extends Document {
   image: string;
   brand: string;
@@ -8,7 +9,7 @@ interface Car extends Document {
   price: number;
   type: string;
 }
-
+// carSchema is a schema for a car document
 const carSchema: Schema<Car> = new Schema({
   image: {
     type: String,
@@ -32,6 +33,7 @@ const carSchema: Schema<Car> = new Schema({
   },
 });
 
+// CarModel is a model for a car document
 const CarModel = mongoose.model<Car>("Car", carSchema);
 
 export default CarModel;

@@ -3,6 +3,15 @@ export declare const fetchData: (url: string) => Promise<{
     carTypeTag: string;
     carBrandTag: string;
 } | undefined>;
+interface Data {
+    name: string;
+    confidence: number;
+}
+export declare const filterDataFromImage: (data: Data[]) => Promise<{
+    colorTags: string;
+    carTypeTag: string;
+    carBrandTag: string;
+} | undefined>;
 interface CarModelType {
     image: string;
     brand: string;

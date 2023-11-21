@@ -25,6 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // car.model.ts
 const mongoose_1 = __importStar(require("mongoose"));
+// carSchema is a schema for a car document
 const carSchema = new mongoose_1.Schema({
     image: {
         type: String,
@@ -47,5 +48,6 @@ const carSchema = new mongoose_1.Schema({
         required: true,
     },
 });
+// CarModel is a model for a car document
 const CarModel = mongoose_1.default.model("Car", carSchema);
 exports.default = CarModel;

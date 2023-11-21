@@ -192,7 +192,7 @@ export const fetchData = async (url: string) => {
     const response = await axios(axiosConfig);
 
     const data = response.data.tagsResult.values;
-
+    console.log(data);
     const colorTags: string[] = [];
     const carTypeTag: string[] = [];
     const carBrandTag: string[] = [];
@@ -231,7 +231,7 @@ export const fetchData = async (url: string) => {
     //   carType: carTypeTag[0],
     //   brand: carBrandTag[0],
     // };
-    // console.log(tags);
+    console.log(tags);
     // console.log(
     //   `Tag for Database : COLOR: ${colorTags[0]}, CAR: ${carTypeTag[0]}, BRAND: ${carBrandTag[0]}`
     // );
@@ -241,6 +241,52 @@ export const fetchData = async (url: string) => {
   }
 };
 
+interface Data {
+  name: string;
+  confidence: number;
+}
+export const filterDataFromImage = async (data: Data[]) => {
+  try {
+    const colorTags: string[] = [];
+    const carTypeTag: string[] = [];
+    const carBrandTag: string[] = [];
+
+    data.map((item: any) => {
+      const tagColor = findReleventTagColor(item.name);
+      const tagCar = findReleventTagCar(item.name);
+      const tagCarBrand = findReleventTagCarBrand(item.name);
+      if (tagColor) {
+        tagColor.toLowerCase();
+        colorTags.push(tagColor);
+      }
+      if (tagCar) {
+        tagCar.toLowerCase();
+        carTypeTag.push(tagCar);
+      }
+      if (tagCarBrand) {
+        tagCarBrand.toLowerCase();
+        carBrandTag.push(tagCarBrand);
+      }
+    });
+    const fullTags = {
+      colorTags,
+      carTypeTag,
+      carBrandTag,
+    };
+
+    const tags = {
+      colorTags: colorTags[0],
+      carTypeTag: carTypeTag[0],
+      carBrandTag: carBrandTag[0],
+    };
+
+    return tags;
+  } catch (error: any) {
+    console.error("Error:", error.response);
+  }
+};
+
+// Interface for car model
 interface CarModelType {
   image: string;
   brand: string;
@@ -254,6 +300,8 @@ interface Tags {
   carTypeTag?: string | undefined;
   carBrandTag?: string | undefined;
 }
+
+// Function to fetch similar cars from database based on tags
 export const fetchSimilarCars = async (tags: Tags): Promise<CarModelType[]> => {
   const { colorTags, carTypeTag, carBrandTag } = tags;
   interface Query {

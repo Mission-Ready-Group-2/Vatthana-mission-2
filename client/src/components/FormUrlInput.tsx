@@ -6,6 +6,7 @@ interface Props {
   handleSubmit: (e: { preventDefault: () => void }) => Promise<void>;
   showPreview: boolean;
 }
+
 const FormUrlInput = (props: Props) => {
   const { carImageUrl, setCarImageUrl, handleSubmit, showPreview } = props;
   return (
@@ -26,7 +27,7 @@ const FormUrlInput = (props: Props) => {
         <div className="flex flex-col justify-center items-center">
           <h2 className="text-lg font-semibold">Selected Photo Preview</h2>
           <img
-            className="rounded-lg shadow-md shadow-slate-600"
+            className="rounded-lg shadow-md shadow-slate-600 w-full h-72 object-cover "
             src={carImageUrl}
             alt="Selected"
             style={{ maxWidth: "100%", maxHeight: "300px" }}

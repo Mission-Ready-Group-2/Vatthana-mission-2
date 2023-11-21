@@ -43,41 +43,64 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const car_model_1 = __importDefault(require("./car.model"));
 const bodyParser = require("body-parser");
 const request_1 = require("./request");
+// import .env variables
 const MONGOURL = process.env.MONGO;
 const KEY = process.env.SUBSCRIPTION_KEY;
 const URL = process.env.ENDPOINT;
-// console.log("KEY", KEY);
-// console.log("URL", URL);
-// console.log("MONGOURL", MONGOURL);
+// Create Express server
 const app = (0, express_1.default)();
+// Express configuration - middleware
 app.use((0, cors_1.default)());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+// Express configuration - port
 const port = process.env.PORT || 5000;
-const mangoURL = MONGOURL || "mongodb://localhost:27017/mission-ready";
-// console.log("mangoURL", process.env.MONGO);
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
+// MongoDB connection
+const mangoURL = MONGOURL || "mongodb://localhost:27017/cars";
+// POST endpoint to analyze image and return similar cars
 app.post("/analyze", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { imageUrl } = req.body;
         const tags = yield (0, request_1.fetchData)(imageUrl);
         let result;
         if (tags) {
+            // fetch similar cars from database
             result = yield (0, request_1.fetchSimilarCars)(tags);
         }
         else {
             res.status(400).json({ error: "No tags found" });
         }
         res.status(200).json({ tags: tags, result: result });
+        console.log({ tags: tags, result: result });
     }
     catch (error) {
         console.error("Error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }));
-// POST endpoint to create a new car
+app.post("/analyzeImage", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = req.body;
+        console.log("data", data);
+        let tags;
+        tags = yield (0, request_1.filterDataFromImage)(data);
+        let result = {};
+        if (tags) {
+            // fetch similar cars from database
+            result = yield (0, request_1.fetchSimilarCars)(tags);
+        }
+        else {
+            res.status(400).json({ error: "No tags found" });
+        }
+        res.status(200).json({ tags: tags, result: result });
+        console.log({ tags: tags, result: result });
+    }
+    catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}));
+// POST endpoint to create a new car in the database
 app.post("/cars", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { image, brand, color, price, type } = req.body;
@@ -101,6 +124,7 @@ app.post("/cars", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }));
+// mongo connection and server start
 mongoose_1.default
     .connect(mangoURL, {
     serverSelectionTimeoutMS: 5000, // Increase the timeout value
