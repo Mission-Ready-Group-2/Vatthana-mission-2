@@ -50,9 +50,9 @@ const URL = process.env.ENDPOINT;
 // Create Express server
 const app = (0, express_1.default)();
 // Express configuration - middleware
-app.use((0, cors_1.default)());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use((0, cors_1.default)());
 // Express configuration - port
 const port = process.env.PORT || 5000;
 // MongoDB connection
@@ -69,7 +69,9 @@ app.post("/analyze", (req, res) => __awaiter(void 0, void 0, void 0, function* (
             result = yield (0, request_1.fetchSimilarCars)(tags);
         }
         else {
-            res.status(400).json({ error: "No tags found" });
+            res.status(400).json({
+                error: "No tags found, image might not be relevent to cars. ",
+            });
         }
         res.status(200).json({ tags: tags, result: result });
     }
@@ -92,7 +94,9 @@ app.post("/analyzeImage", (req, res) => __awaiter(void 0, void 0, void 0, functi
             result = yield (0, request_1.fetchSimilarCars)(tags);
         }
         else {
-            res.status(400).json({ error: "No tags found" });
+            res.status(400).json({
+                error: "No tags found, image might not be relevent to cars.  ",
+            });
         }
         res.status(200).json({ tags: tags, result: result });
     }

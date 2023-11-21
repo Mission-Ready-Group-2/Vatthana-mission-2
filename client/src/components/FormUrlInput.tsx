@@ -13,7 +13,8 @@ interface Props {
   setCarsFromDB: (value: Car[]) => void;
   setLoading: (value: boolean) => void;
 }
-
+const VITE_PATH_BACKEND_URL: string = import.meta.env
+  .VITE_PATH_BACKEND_URL as string;
 const FormUrlInput = (props: Props) => {
   const { carImageUrl, setCarImageUrl, showPreview } = props;
 
@@ -27,13 +28,13 @@ const FormUrlInput = (props: Props) => {
       const body = { imageUrl: carImageUrl };
 
       // Make the POST request using Axios
-      const res = await axios.post("http://localhost:5000/analyze", body, {
+      const res = await axios.post(VITE_PATH_BACKEND_URL, body, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       // Update the state with the response
-      console.log(res.data);
+
       props.setCarTags(res.data.tags);
       props.setCarsFromDB(res.data.result);
       props.setLoading(false);

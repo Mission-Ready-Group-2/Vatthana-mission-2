@@ -14,7 +14,7 @@ export interface Tags {
   carBrandTag?: string | undefined;
 }
 
-export interface DAtaFromAzure {
+export interface DataFromAzure {
   name: string;
   confidence: number;
 }

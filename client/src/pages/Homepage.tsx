@@ -53,6 +53,7 @@ function Homepage() {
   const setForm = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const target = e.target as HTMLButtonElement;
+    // Update the state to show the form
     if (target.value === "url") {
       setFormToShow("url");
       setCarImageUrl("");
@@ -63,6 +64,7 @@ function Homepage() {
         carBrandTag: "",
       });
     }
+    // Update the state to show the form
     if (target.value === "upload") {
       setFormToShow("upload");
       setCarImageUrl("");
@@ -75,18 +77,16 @@ function Homepage() {
     }
   };
   // Check if the tags are undefined
-  const checkUndefinded =
+  const areTagsUndefined =
     carTags.carBrandTag === undefined &&
     carTags.carTypeTag === undefined &&
     carTags.colorTags === undefined;
 
   // Display the tags
   const tagsDisplay =
-    carTags.carBrandTag !== "" ||
-    carTags.carTypeTag !== "" ||
-    carTags.colorTags !== "" ? (
+    carTags.carBrandTag || carTags.carTypeTag || carTags.colorTags ? (
       <p className="text-xl m-5 font-bold">
-        Tags Founded on you image :{" "}
+        Tags Found on your image:{" "}
         {`${carTags.colorTags} & ${carTags.carBrandTag} & ${carTags.carTypeTag}`}
       </p>
     ) : null;
@@ -123,7 +123,7 @@ function Homepage() {
           />
         )}
         {/* TAGS DISPLAY */}
-        {checkUndefinded ? (
+        {areTagsUndefined ? (
           <p className="text-xl font-bold m-5">
             No tags match : Here are all our cars !
           </p>

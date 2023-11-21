@@ -16,9 +16,9 @@ const URL = process.env.ENDPOINT;
 const app = express();
 
 // Express configuration - middleware
-app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(cors());
 
 // Express configuration - port
 const port = process.env.PORT || 5000;
@@ -38,7 +38,9 @@ app.post("/analyze", async (req: Request, res: Response) => {
       // fetch similar cars from database
       result = await fetchSimilarCars(tags);
     } else {
-      res.status(400).json({ error: "No tags found" });
+      res.status(400).json({
+        error: "No tags found, image might not be relevent to cars. ",
+      });
     }
 
     res.status(200).json({ tags: tags, result: result });
@@ -62,7 +64,9 @@ app.post("/analyzeImage", async (req: Request, res: Response) => {
       // fetch similar cars from database
       result = await fetchSimilarCars(tags);
     } else {
-      res.status(400).json({ error: "No tags found" });
+      res.status(400).json({
+        error: "No tags found, image might not be relevent to cars.  ",
+      });
     }
 
     res.status(200).json({ tags: tags, result: result });

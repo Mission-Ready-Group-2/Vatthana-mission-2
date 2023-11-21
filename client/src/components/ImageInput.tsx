@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
 import BlueButton from "./BlueButton";
 import { Car, Tags } from "../interfaces/interfaces";
-import { DAtaFromAzure } from "../interfaces/interfaces";
+import { DataFromAzure } from "../interfaces/interfaces";
 const API_KEY: string = import.meta.env.VITE_API_KEY as string;
 const API_URL: string = import.meta.env.VITE_API_ENDPOINT as string;
-
+const VITE_PATH_BACKEND_IMAGE: string = import.meta.env
+  .VITE_PATH_BACKEND_IMAGE as string;
 interface Props {
   setCarsFromDB: (value: Car[]) => void;
   setCarTags: (value: Tags) => void;
@@ -16,7 +17,7 @@ const ImageInput = (props: Props) => {
   // State to manage the image
   const [image, setImage] = useState<FileList>();
   // State to manage the data from Azure
-  const [dataFromApi, setDataFromApi] = useState<DAtaFromAzure[]>([]);
+  const [dataFromApi, setDataFromApi] = useState<DataFromAzure[]>([]);
 
   // Fetch key tags from AI API
   async function getImageData(e: { preventDefault: () => void }) {
@@ -42,7 +43,7 @@ const ImageInput = (props: Props) => {
   // Fetch data from backend and update state with data
   const fetchFromBackend = async () => {
     const responseBackend: AxiosResponse = await axios.post(
-      "http://localhost:5000/analyzeImage",
+      VITE_PATH_BACKEND_IMAGE,
       dataFromApi,
       {
         headers: {

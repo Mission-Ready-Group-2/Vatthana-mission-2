@@ -1,179 +1,33 @@
 import axios, { AxiosRequestConfig } from "axios";
 import * as dotenv from "dotenv";
 import CarModel from "./Model/car.model";
+import { colors, cars, carBrands } from "./Model/ComparaisonArrays";
 import { Tags, Data, CarModelType, Query } from "./interfaces/interfaces";
 dotenv.config();
 
 const KEY: string | undefined = process.env.SUBSCRIPTION_KEY;
 const URL: string | undefined = process.env.ENDPOINT;
 
+// Check if .env variables are defined
+if (!KEY || !URL) {
+  throw new Error("Subscription key or endpoint not defined");
+}
+
 const imageUrl = "https://www.aa.co.nz/assets/motoring/blog/jazz-eHEV2.jpg";
 
-// Array of colors for comparison
-const colors = [
-  "red",
-  "green",
-  "blue",
-  "yellow",
-  "purple",
-  "cyan",
-  "magenta",
-  "lime",
-  "pink",
-  "teal",
-  "lavender",
-  "brown",
-  "beige",
-  "maroon",
-  "mint",
-  "olive",
-  "apricot",
-  "navy",
-  "gold",
-  "silver",
-  "orange",
-  "indigo",
-  "violet",
-  "gray",
-  "black",
-  "white",
-  "coral",
-  "fuchsia",
-  "wheat",
-  "linen",
-  "ivory",
-  "khaki",
-  "ginger",
-  "jade",
-  "jasmine",
-  "jet",
-  "mauve",
-  "moss",
-  "plum",
-  "rust",
-];
-
-// Array of car types for comparison
-const cars = [
-  "sedan",
-  "coupe",
-  "sports car",
-  "station wagon",
-  "hatchback",
-  "convertible",
-  "suv",
-  "minivan",
-  "pickup truck",
-  "off-road",
-  "luxury car",
-  "commercial vehicle",
-  "compact",
-  "subcompact",
-  "mid-size",
-  "full-size",
-  "roadster",
-  "limousine",
-  "van",
-  "jeep",
-  "cabriolet",
-  "microcar",
-  "muscle car",
-  "pony car",
-  "sport compact",
-  "supermini",
-  "family car",
-  "executive car",
-  "estate car",
-  "grand tourer",
-];
-
-// Array of car brands for comparison
-const carBrands = [
-  "Toyota",
-  "Ford",
-  "Chevrolet",
-  "Honda",
-  "Nissan",
-  "Volkswagen",
-  "BMW",
-  "Mercedes-Benz",
-  "Audi",
-  "Hyundai",
-  "Kia",
-  "Volvo",
-  "Mazda",
-  "Subaru",
-  "Tesla",
-  "Ferrari",
-  "Lamborghini",
-  "Porsche",
-  "Jaguar",
-  "Land Rover",
-  "Lexus",
-  "Acura",
-  "Buick",
-  "Cadillac",
-  "Chrysler",
-  "Dodge",
-  "Jeep",
-  "Ram",
-  "GMC",
-  "Lincoln",
-  "Chevrolet",
-  "Fiat",
-  "Maserati",
-  "Alfa Romeo",
-  "MINI",
-  "Smart",
-  "Vauxhall",
-  "Opel",
-  "Peugeot",
-  "Renault",
-  "Citroën",
-  "Fiat",
-  "Skoda",
-  "Seat",
-  "Mitsubishi",
-  "Suzuki",
-  "Isuzu",
-  "Proton",
-  "Tata",
-  "Mahindra",
-  "Koenigsegg",
-  "Bugatti",
-  "McLaren",
-  "Aston Martin",
-  "Lotus",
-  "Maybach",
-  "Bentley",
-  "Rolls-Royce",
-  // Add more brands as needed
-];
-
-// Function to find relevent tag color
-const findReleventTagColor = (tags: string) => {
-  const tag = tags.toLowerCase();
-  const tagColor = colors.find(
-    (color) => color.toLowerCase() === tag.toLowerCase()
-  );
-  return tagColor;
+// Function to find relevant tag from array
+const findRelevantTag = (array: string[], tag: string) => {
+  const lowerCaseTag = tag.toLowerCase();
+  const foundItem = array.find((item) => item.toLowerCase() === lowerCaseTag);
+  return foundItem;
 };
-
-// Function to find relevent tag car type
-const findReleventTagCar = (tags: string) => {
-  const tag = tags.toLowerCase();
-  const tagCar = cars.find((car) => car.toLowerCase() === tag.toLowerCase());
-  return tagCar;
-};
-
-// Function to find relevent tag car brand
-const findReleventTagCarBrand = (tags: string) => {
-  const tag = tags.toLowerCase();
-  const tagCarBrand = carBrands.find(
-    (car) => car.toLowerCase() === tag.toLowerCase()
-  );
-  return tagCarBrand;
-};
+// Function to find relevant tag from array of colors
+const findRelevantTagColor = (tag: string) => findRelevantTag(colors, tag);
+// Function to find relevant tag from array of car types
+const findRelevantTagCar = (tag: string) => findRelevantTag(cars, tag);
+// Function to find relevant tag from array of car brands
+const findRelevantTagCarBrand = (tag: string) =>
+  findRelevantTag(carBrands, tag);
 
 // Function to fetch data from Azure Computer Vision API and return tags from url
 export const fetchData = async (url: string) => {
@@ -199,9 +53,9 @@ export const fetchData = async (url: string) => {
     const carBrandTag: string[] = [];
     // map through data and find relevent tags
     data.map((item: any) => {
-      const tagColor = findReleventTagColor(item.name);
-      const tagCar = findReleventTagCar(item.name);
-      const tagCarBrand = findReleventTagCarBrand(item.name);
+      const tagColor = findRelevantTagColor(item.name);
+      const tagCar = findRelevantTagCar(item.name);
+      const tagCarBrand = findRelevantTagCarBrand(item.name);
       if (tagColor) {
         tagColor.toLowerCase();
         colorTags.push(tagColor);
@@ -245,9 +99,9 @@ export const filterDataFromImage = async (data: Data[]) => {
     const carBrandTag: string[] = [];
     // map through data and find relevent tags
     data.map((item: any) => {
-      const tagColor = findReleventTagColor(item.name);
-      const tagCar = findReleventTagCar(item.name);
-      const tagCarBrand = findReleventTagCarBrand(item.name);
+      const tagColor = findRelevantTagColor(item.name);
+      const tagCar = findRelevantTagCar(item.name);
+      const tagCarBrand = findRelevantTagCarBrand(item.name);
       if (tagColor) {
         tagColor.toLowerCase();
         colorTags.push(tagColor);
