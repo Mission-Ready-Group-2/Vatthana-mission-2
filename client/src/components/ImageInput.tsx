@@ -1,37 +1,26 @@
 import { useState, useEffect } from "react";
 import axios, { AxiosResponse } from "axios";
-
+import BlueButton from "./BlueButton";
+import { Car, Tags } from "../interfaces/interfaces";
+import { DAtaFromAzure } from "../interfaces/interfaces";
 const API_KEY: string = import.meta.env.VITE_API_KEY as string;
 const API_URL: string = import.meta.env.VITE_API_ENDPOINT as string;
 
-interface Car {
-  _id: string;
-  brand: string;
-  image: string;
-  color: string;
-  price: number;
-  type: string;
-}
-interface Tags {
-  colorTags?: string | undefined;
-  carTypeTag?: string | undefined;
-  carBrandTag?: string | undefined;
-}
 interface Props {
   setCarsFromDB: (value: Car[]) => void;
   setCarTags: (value: Tags) => void;
   setLoading: (value: boolean) => void;
 }
-interface DAtaFromAzure {
-  name: string;
-  confidence: number;
-}
+
 const ImageInput = (props: Props) => {
+  // State to manage the image
   const [image, setImage] = useState<FileList>();
+  // State to manage the data from Azure
   const [dataFromApi, setDataFromApi] = useState<DAtaFromAzure[]>([]);
 
   // Fetch key tags from AI API
-  async function getImageData() {
+  async function getImageData(e: { preventDefault: () => void }) {
+    e.preventDefault();
     props.setLoading(true);
     if (image) {
       try {
@@ -50,6 +39,7 @@ const ImageInput = (props: Props) => {
       }
     }
   }
+  // Fetch data from backend and update state with data
   const fetchFromBackend = async () => {
     const responseBackend: AxiosResponse = await axios.post(
       "http://localhost:5000/analyzeImage",
@@ -66,6 +56,7 @@ const ImageInput = (props: Props) => {
     console.log(responseBackend.data);
     props.setLoading(false);
   };
+  // Fetch data from backend when dataFromApi state changes and is not empty
   useEffect(() => {
     if (dataFromApi.length > 0) {
       fetchFromBackend();
@@ -73,8 +64,12 @@ const ImageInput = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setDataFromApi, dataFromApi]);
   return (
-    <>
-      <h1>Upload image</h1>
+    <form
+      className="flex flex-col items-center space-y-8"
+      onSubmit={getImageData}
+    >
+      <h1 className="text-xl font-semibold">Upload image</h1>
+
       <input
         type="file"
         name="image"
@@ -84,12 +79,9 @@ const ImageInput = (props: Props) => {
           }
         }}
       />
-      <button
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        onClick={getImageData}
-      >
-        Submit upload image{" "}
-      </button>
+
+      <BlueButton text="Submit uploaded image" />
+
       {image && (
         <div className="flex flex-col justify-center items-center">
           <h2 className="text-lg font-semibold">Selected Photo Preview</h2>
@@ -101,7 +93,7 @@ const ImageInput = (props: Props) => {
           />
         </div>
       )}
-    </>
+    </form>
   );
 };
 

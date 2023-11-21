@@ -1,23 +1,57 @@
 import React from "react";
+import BlueButton from "./BlueButton";
+import axios from "axios";
+import { Car, Tags } from "../interfaces/interfaces";
 
 interface Props {
   carImageUrl: string;
   setCarImageUrl: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (e: { preventDefault: () => void }) => Promise<void>;
+
   showPreview: boolean;
+  setShowPreview: React.Dispatch<React.SetStateAction<boolean>>;
+  setCarTags: (value: Tags) => void;
+  setCarsFromDB: (value: Car[]) => void;
+  setLoading: (value: boolean) => void;
 }
 
 const FormUrlInput = (props: Props) => {
-  const { carImageUrl, setCarImageUrl, handleSubmit, showPreview } = props;
+  const { carImageUrl, setCarImageUrl, showPreview } = props;
+
+  // Handle form submission
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    props.setLoading(true);
+    props.setShowPreview(true);
+
+    try {
+      const body = { imageUrl: carImageUrl };
+
+      // Make the POST request using Axios
+      const res = await axios.post("http://localhost:5000/analyze", body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      // Update the state with the response
+      console.log(res.data);
+      props.setCarTags(res.data.tags);
+      props.setCarsFromDB(res.data.result);
+      props.setLoading(false);
+    } catch (error) {
+      console.error("Error during POST request:", error);
+      props.setLoading(false);
+      // Handle errors as needed
+    }
+  };
   return (
     <form
       onSubmit={handleSubmit}
       className="flex flex-col items-center space-y-3"
     >
-      <div className="text-xl font-semibold">Car Image URL:</div>
+      <div className="text-xl font-semibold">Car Image URL</div>
 
       <input
-        className="bg-gray-300 w-96 h-10 px-5 pr-16 rounded-lg text-md focus:outline-none"
+        className="bg-gray-300 w-96 h-10 px-5 pr-16 rounded-lg text-md focus:outline-none "
         type="text"
         value={carImageUrl}
         onChange={(e) => setCarImageUrl(e.target.value)}
@@ -34,13 +68,7 @@ const FormUrlInput = (props: Props) => {
           />
         </div>
       )}
-
-      <button
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-        type="submit"
-      >
-        Submit
-      </button>
+      <BlueButton text="Submit URL" />
     </form>
   );
 };
