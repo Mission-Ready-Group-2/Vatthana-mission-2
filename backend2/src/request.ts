@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import * as dotenv from "dotenv";
-import CarModel from "./car.model";
-import { Tags, Data, CarModelType, Query } from "./interfaces";
+import CarModel from "./Model/car.model";
+import { Tags, Data, CarModelType, Query } from "./interfaces/interfaces";
 dotenv.config();
 
 const KEY: string | undefined = process.env.SUBSCRIPTION_KEY;

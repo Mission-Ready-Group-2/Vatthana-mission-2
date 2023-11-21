@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fetchSimilarCars = exports.filterDataFromImage = exports.fetchData = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dotenv = __importStar(require("dotenv"));
-const car_model_1 = __importDefault(require("./car.model"));
+const car_model_1 = __importDefault(require("./Model/car.model"));
 dotenv.config();
 const KEY = process.env.SUBSCRIPTION_KEY;
 const URL = process.env.ENDPOINT;

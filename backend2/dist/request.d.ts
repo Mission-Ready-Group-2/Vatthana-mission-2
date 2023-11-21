@@ -1,4 +1,4 @@
-import { Tags, Data, CarModelType } from "./interfaces";
+import { Tags, Data, CarModelType } from "./interfaces/interfaces";
 export declare const fetchData: (url: string) => Promise<{
     colorTags: string;
     carTypeTag: string;

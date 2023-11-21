@@ -3,10 +3,10 @@ dotenv.config();
 import cors from "cors";
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
-import CarModel from "./car.model";
+import CarModel from "./Model/car.model";
 import bodyParser = require("body-parser");
 import { fetchData, fetchSimilarCars, filterDataFromImage } from "./request";
-import { Tags } from "./interfaces";
+import { Tags } from "./interfaces/interfaces";
 // import .env variables
 const MONGOURL = process.env.MONGO;
 const KEY = process.env.SUBSCRIPTION_KEY;
