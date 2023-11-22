@@ -43,6 +43,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const car_model_1 = __importDefault(require("./Model/car.model"));
 const bodyParser = require("body-parser");
 const request_1 = require("./request");
+const axios_1 = __importDefault(require("axios"));
 // import .env variables
 const MONGOURL = process.env.MONGO;
 const KEY = process.env.SUBSCRIPTION_KEY;
@@ -127,6 +128,27 @@ app.post("/cars", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error("Error creating car:", error);
         res.status(500).json({ error: "Internal Server Error" });
+    }
+}));
+app.post("/azure", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const axiosConfig = {
+        method: "post",
+        url: URL,
+        data: {
+            url: "https://di-uploads-pod15.dealerinspire.com/lakeforestsportscars/uploads/2019/10/Ferrari-LaFerrari-Aperta.jpg",
+        },
+        headers: {
+            "Content-Type": "application/json",
+            "Ocp-Apim-Subscription-Key": KEY,
+        },
+    };
+    try {
+        const response = yield (0, axios_1.default)(axiosConfig);
+        const data = response.data.tagsResult.values;
+        return res.status(200).json(data);
+    }
+    catch (error) {
+        console.error("Error:", error.response);
     }
 }));
 // mongo connection and server start

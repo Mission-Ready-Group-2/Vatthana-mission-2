@@ -48,35 +48,17 @@ if (!KEY || !URL) {
     throw new Error("Subscription key or endpoint not defined");
 }
 const imageUrl = "https://www.aa.co.nz/assets/motoring/blog/jazz-eHEV2.jpg";
-// // Function to find relevent tag color
-// const findReleventTagColor = (tags: string) => {
-//   const tag = tags.toLowerCase();
-//   const tagColor = colors.find(
-//     (color) => color.toLowerCase() === tag.toLowerCase()
-//   );
-//   return tagColor;
-// };
-// // Function to find relevent tag car type
-// const findReleventTagCar = (tags: string) => {
-//   const tag = tags.toLowerCase();
-//   const tagCar = cars.find((car) => car.toLowerCase() === tag.toLowerCase());
-//   return tagCar;
-// };
-// // Function to find relevent tag car brand
-// const findReleventTagCarBrand = (tags: string) => {
-//   const tag = tags.toLowerCase();
-//   const tagCarBrand = carBrands.find(
-//     (car) => car.toLowerCase() === tag.toLowerCase()
-//   );
-//   return tagCarBrand;
-// };
+// Function to find relevant tag from array
 const findRelevantTag = (array, tag) => {
     const lowerCaseTag = tag.toLowerCase();
     const foundItem = array.find((item) => item.toLowerCase() === lowerCaseTag);
     return foundItem;
 };
+// Function to find relevant tag from array of colors
 const findRelevantTagColor = (tag) => findRelevantTag(ComparaisonArrays_1.colors, tag);
+// Function to find relevant tag from array of car types
 const findRelevantTagCar = (tag) => findRelevantTag(ComparaisonArrays_1.cars, tag);
+// Function to find relevant tag from array of car brands
 const findRelevantTagCarBrand = (tag) => findRelevantTag(ComparaisonArrays_1.carBrands, tag);
 // Function to fetch data from Azure Computer Vision API and return tags from url
 const fetchData = (url) => __awaiter(void 0, void 0, void 0, function* () {

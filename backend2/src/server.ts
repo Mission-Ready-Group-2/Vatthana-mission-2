@@ -7,6 +7,7 @@ import CarModel from "./Model/car.model";
 import bodyParser = require("body-parser");
 import { fetchData, fetchSimilarCars, filterDataFromImage } from "./request";
 import { Tags } from "./interfaces/interfaces";
+import axios from "axios";
 // import .env variables
 const MONGOURL = process.env.MONGO;
 const KEY = process.env.SUBSCRIPTION_KEY;
@@ -103,6 +104,27 @@ app.post("/cars", async (req, res) => {
   }
 });
 
+app.post("/azure", async (req, res) => {
+  const axiosConfig = {
+    method: "post",
+    url: URL,
+    data: {
+      url: "https://di-uploads-pod15.dealerinspire.com/lakeforestsportscars/uploads/2019/10/Ferrari-LaFerrari-Aperta.jpg",
+    },
+    headers: {
+      "Content-Type": "application/json",
+      "Ocp-Apim-Subscription-Key": KEY,
+    },
+  };
+  try {
+    const response = await axios(axiosConfig);
+
+    const data = response.data.tagsResult.values;
+    return res.status(200).json(data);
+  } catch (error: any) {
+    console.error("Error:", error.response);
+  }
+});
 // mongo connection and server start
 mongoose
   .connect(mangoURL, {
