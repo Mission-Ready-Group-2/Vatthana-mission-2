@@ -22,6 +22,7 @@ const FormUrlInput = (props: Props) => {
     e.preventDefault();
     props.setLoading(true);
     props.setShowPreview(true);
+    console.log(VITE_PATH_BACKEND);
 
     try {
       const body = { imageUrl: carImageUrl };
