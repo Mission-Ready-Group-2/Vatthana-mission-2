@@ -58,6 +58,9 @@ app.use((0, cors_1.default)());
 const port = process.env.PORT || 5000;
 // MongoDB connection
 const mangoURL = MONGOURL || "mongodb://localhost:27017/cars";
+app.get("/", (req, res) => {
+    res.send("Hello World!");
+});
 // POST endpoint to analyze image and return similar cars
 app.post("/analyze", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
