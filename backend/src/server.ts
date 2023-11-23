@@ -19,7 +19,13 @@ const app = express();
 // Express configuration - middleware
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use(cors());
+
+app.use(
+  cors({
+    origin:
+      "https://vatthana-mission-2-xr8n-8h0on8t8n-vatthanas-projects.vercel.app/",
+  })
+);
 
 // Express configuration - port
 const port = process.env.PORT || 5000;
